@@ -1,0 +1,8 @@
+tol 1e-7
+mu_strategy adaptive
+output_file ipopt.out
+hessian_approximation limited-memory
+jacobian_approximation finite-difference-values
+##print_info_string yes
+##print_options_documentation yes
+##derivative_test first-order
