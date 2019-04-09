@@ -6,20 +6,26 @@
 
 #include "IpIpoptApplication.hpp"
 #include "stone_slide_nlp.hpp"
+#include "Differentiation_Matrix.hpp"
 
 #include <iostream>
+#include <cstdlib>
 
 using namespace Ipopt;
 
 int main(int argv, char* argc[]) {
   // Create a new instance of your nlp
   //  (use a SmartPtr, not raw)
-  SmartPtr<TNLP> mynlp = new STONE_SLIDE_NLP();
+  int no_of_grid_points;
+  //std::cin >> no_of_grid_points;
+  no_of_grid_points = atoi(argc[1]);
+  SmartPtr<TNLP> mynlp = new STONE_SLIDE_NLP(no_of_grid_points);
 
   // Create a new instance of IpoptApplication
   //  (use a SmartPtr, not raw)
   // We are using the factory, since this allows us to compile this
   // example with an Ipopt Windows DLL
+  /*
   SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
   app->RethrowNonIpoptException(true);
 
@@ -61,4 +67,8 @@ int main(int argv, char* argc[]) {
   // be deleted.
 
   return (int)status;
+
+
+  */
+  return 0;
 }

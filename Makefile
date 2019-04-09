@@ -10,18 +10,21 @@
 ##########################################################################
 
 # CHANGEME: This should be the name of your executable
-EXE = block_move_cpp
+EXE = stone_slide_cpp
 
 # CHANGEME: Here is the name of all object files corresponding to the source
 #           code that you wrote in order to define the problem statement
-OBJS = block_move_main.o \
-	block_move_nlp.o
+OBJS = stone_slide_main.o \
+	stone_slide_nlp.o \
+	Differentiation_Matrix.o \
+	
+	
 
 # CHANGEME: Additional libraries
-ADDLIBS =
+ADDLIBS = 
 
 # CHANGEME: Additional flags for compilation (e.g., include flags)
-ADDINCFLAGS =
+ADDINCFLAGS = -I/home/dell/sliding_stone
 
 ##########################################################################
 #  Usually, you don't have to change anything below.  Note that if you   #

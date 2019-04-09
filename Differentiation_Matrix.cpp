@@ -1,14 +1,17 @@
-//#include <iostream>
-#include "Differentiation_Matrix.h"
+#include <iostream>
+#include "Differentiation_Matrix.hpp"
 #include <cmath>
+#include <vector>
 #define PI acos(-1)
+// typedef double decimal;
+// typedef int integer;
 //decimal DEG_to_RAD(decimal d) { return d * PI / 180.0; }
 //decimal RAD_to_DEG(decimal r) { return r * 180.0 / PI; }
 
 template<class decimal, class integer>
 std::vector<decimal > compute_c
 (
-  integer N
+    integer N
 )
 {
 	std::vector<decimal > c(N);
@@ -22,13 +25,13 @@ std::vector<decimal > compute_c
 template<class decimal, class integer>
 std::vector<decimal > define_time_stamps
 (
-  integer N
+    integer N
 )
 {
 	std::vector<decimal > t(N);
 	for (integer k = 0 ; k < N ; k++) {
 		t[k] = (decimal)cos(((PI * k) / (N - 1) ));
-	
+
 	}
 	return t;
 }
@@ -36,9 +39,9 @@ std::vector<decimal > define_time_stamps
 template<class decimal, class integer>
 std::vector<decimal > multiply_D_X
 (
-  std::vector<std::vector<decimal > > 	D,	// matrix D
-  std::vector<decimal > 								X,	// vector X
-  integer 																N 	// length of vector X
+    std::vector<std::vector<decimal > > 	D,	// matrix D
+    std::vector<decimal > 								X,	// vector X
+    integer 																N 	// length of vector X
 )
 {
 	std::vector<decimal > prod(N);
@@ -57,9 +60,9 @@ std::vector<decimal > multiply_D_X
 template<class decimal, class integer>
 std::vector<std::vector<decimal > > formulate_differentiation_matrix
 (
-  std::vector<decimal > c, //
-  std::vector<decimal > t,
-  integer 				 N //
+    std::vector<decimal > c, //
+    std::vector<decimal > t,
+    integer 				 N //
 )
 {
 	std::vector<std::vector<decimal > > D (N , std::vector <decimal > (N));

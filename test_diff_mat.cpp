@@ -50,7 +50,7 @@ int main() {
 	*/
 	P = multiply_D_X<double, int>(D, X, n + 1);
 	for (int i = 0 ; i <= n ; i++) {
-		cout << T[i] << "," << P[i] << "\n";
+		//cout << T[i] << "," << P[i] << "\n";
 	}
 	return 0;
 }

@@ -8,7 +8,7 @@
 #define __STONE_SLIDE_NLP_HPP__
 
 #include "IpTNLP.hpp"
-
+#include <vector>
 using namespace Ipopt;
 
 /**
@@ -21,6 +21,11 @@ using namespace Ipopt;
 class STONE_SLIDE_NLP: public TNLP
 {
 public:
+  
+  // parameterised constructor
+  STONE_SLIDE_NLP(
+    Index N
+  );
   /** Default constructor */
   STONE_SLIDE_NLP();
 
@@ -149,6 +154,7 @@ private:
    *  knowing. (See Scott Meyers book, "Effective C++")
    */
   //@{
+
   STONE_SLIDE_NLP(
     const STONE_SLIDE_NLP&
   );
@@ -157,6 +163,12 @@ private:
     const STONE_SLIDE_NLP&
   );
   //@}
+
+  // Private Data Members
+  /** Parameter determining problem size */
+  Index N_;
+  std::vector<Number > T;
+
 };
 
 #endif

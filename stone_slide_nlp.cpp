@@ -5,17 +5,18 @@
 // Authors:  Carl Laird, Andreas Waechter     IBM    2005-08-16
 
 #include "stone_slide_nlp.hpp"
+//#include "Differentiation_Matrix.hpp"
 
 #include <cassert>
 #include <fstream>
 #include <iostream>
 #include <cmath>
-
+#include "Differentiation_Matrix.cpp"
 using namespace Ipopt;
 
 // define no of constraints and size of decision vector
 
-#define N_ 10 // no of grid points
+//#define N_ 10 // no of grid points
 
 // define size of stepsize for finite difference scheme to find gradient
 const Number step_size = 1e-8;
@@ -24,9 +25,23 @@ const Number step_size = 1e-8;
 inline Number Obj_func(Number* X, Index n)
 {
 
-  Numer value = 0.0;
+  Number value = X[n - 1];
 
   return value;
+}
+
+//Default Constructor
+STONE_SLIDE_NLP::STONE_SLIDE_NLP
+(
+  Index N
+)
+{
+  N_ = N;
+  T = define_time_stamps<Number, Index>(N_ + 1);
+  for (Index i = 0; i <= N_; i++)
+  {
+    std::cout << "T[" << i << "]" << " : " << T[i] << "\n";
+  }
 }
 
 // constructor
@@ -35,12 +50,13 @@ STONE_SLIDE_NLP::STONE_SLIDE_NLP() {}
 // destructor
 STONE_SLIDE_NLP::~STONE_SLIDE_NLP() {}
 
+
 // returns the size of the problem
-bool STONE_SLIDE_NLP::get_nlp_info(Index& n,          // size of problem
-                                   Index& m,          // no of constraintsno of constraints
-                                   Index& nnz_jac_g,  // no of non zero elements in jacobain
-                                   Index& nnz_h_lag,  // no of non zero elements in hessian
-                                   IndexStyleEnum& index_style)
+bool STONE_SLIDE_NLP::get_nlp_info(Index & n,         // size of problem
+                                   Index & m,         // no of constraintsno of constraints
+                                   Index & nnz_jac_g, // no of non zero elements in jacobain
+                                   Index & nnz_h_lag, // no of non zero elements in hessian
+                                   IndexStyleEnum & index_style)
 {
   // The problem described
   n = (3 * (N_ + 1) ) + 2;
@@ -62,11 +78,11 @@ bool STONE_SLIDE_NLP::get_nlp_info(Index& n,          // size of problem
 
 // returns the variable bounds
 bool STONE_SLIDE_NLP::get_bounds_info(Index n,      // size of problem
-                                      Number* x_l,  // lower limits for decision variables
-                                      Number* x_u,  // uppe limits for decision variables
+                                      Number * x_l, // lower limits for decision variables
+                                      Number * x_u, // uppe limits for decision variables
                                       Index m,      // no of constraints
-                                      Number* g_l,  // lower limits for constraints
-                                      Number* g_u)  // upper limits for constraints
+                                      Number * g_l, // lower limits for constraints
+                                      Number * g_u) // upper limits for constraints
 {
   // here, the n and m we gave IPOPT in get_nlp_info are passed back to us.
   // If desired, we could assert to make sure they are what we think they are.
@@ -76,50 +92,50 @@ bool STONE_SLIDE_NLP::get_bounds_info(Index n,      // size of problem
   // Lower bounds
   // for X
   for (Index i = 0; i <= N_; i++) {
-    x_l[i] = -2.0;
+    x_l[i] = -10.0;
   }
   // for Y
   for (Index i = (N_ + 1); i <= ((2 * N_) + 1); i++) {
-    x_l[i] = -10.0;
+    x_l[i] = -40.0;
   }
   // // for Theta
   for (Index i = ((2 * N_) + 2); i <= ((3 * N_) + 3); i++) {
     x_l[i] = -PI;
   }
   //for tow
-  x_l[n-1]=-1;
+  x_l[n - 1] = -1.0;
 
   // Upper Bounds
   // for X
   for (Index i = 0; i <= N_; i++) {
-    x_u[i] = +2.0;
+    x_u[i] = +10.0;
   }
   // for Y
   for (Index i = (N_ + 1); i <= ((2 * N_) + 1); i++) {
-    x_u[i] = +10.0;
+    x_u[i] = +40.0;
   }
   // for Theta
   for (Index i = ((2 * N_) + 2); i <= ((3 * N_) + 3); i++) {
     x_u[i] = -PI;
   }
   //for tow
-  x_l[n-1]=+1;
+  x_u[n - 1] = +1.0;
 
   // set bounds on constraints
-  
+
   return true;
 }
 
 // returns the initial point for the problem
 bool STONE_SLIDE_NLP::get_starting_point(Index n,           //
     bool init_x,       //
-    Number* x,         //
+    Number * x,        //
     bool init_z,       //
-    Number* z_L,       //
-    Number* z_U,       //
+    Number * z_L,      //
+    Number * z_U,      //
     Index m,           //
     bool init_lambda,  //
-    Number* lambda)
+    Number * lambda)
 {
   // Here, we assume we only have starting values for x, if you code
   // your own NLP, you can provide starting values for the dual variables
@@ -128,65 +144,42 @@ bool STONE_SLIDE_NLP::get_starting_point(Index n,           //
   assert(init_z == false);
   assert(init_lambda == false);
   //std::cout << "Initialization\n";
-  // for distance x
-  for (Index i = 0; i < n / 3; i++) {
-    x[i] = i * h_k;
-    //std::cout << "x[" << i << "]: " << x[i] << "\n";
+  // for distance X
+  for (Index i = 0; i <= N_; i++)
+  {
+    x[i] = T[i];
+    //std::cout << T[i] << "," << x[i] << "\n";
   }
-  //std::cout << std::endl;
-
-  // hard coded
-  /*x[10] = 0;
-  x[11] = 0;
-  x[12] = -10;
-  x[13] = -36;
-  x[14] = -72;
-  x[15] = -120;
-  x[16] = -180;
-  x[17] = -252;
-  x[18] = -336;
-  x[19] = -432;*/
-
-  // for veclocity v
-  for (Index i = n / 3; i < ((2 * n) / 3); i++) {
-    x[i] = 1;
-    //std::cout << "x[" << i << "]: " << x[i] << "\n";
+  // for Y
+  for (Index i = (N_ + 1); i <= ((2 * N_) + 1); i++) {
+    x[i] = T[i - (N_ + 1)];
+    //std::cout << T[i - (N_ + 1)] << "," << x[i] << "\n";
   }
-  //std::cout << std::endl;
-
-  // for acceleration u
-  //double t = 0.0;
-  for (Index i = ((2 * n) / 3); i < n; i++) {
-    //x[i] = 6 - (12 * t);
-    //t = t + h_k;
-    x[i] = 0.0;
-    //std::cout << "x[" << i << "]: " << x[i] << "\n";
+  // for Theta
+  for (Index i = ((2 * N_) + 2); i <= ((3 * N_) + 3); i++) {
+    x[i] = atan(x[i - (N_ + 1) ] / x[i - (2 * (N_ + 1))]);
+    //std::cout << T[i - 2 * (N_ + 1)] << "," << x[i] << "\n";
   }
-  //std::cout << std::endl;
-
+  //for tow f
+  x[n - 1] = 0.5;
   return true;
 }
 
 // returns the value of the objective function
 bool STONE_SLIDE_NLP::eval_f(Index n,          //
-                             const Number* x,  //
+                             const Number * x, //
                              bool new_x,       //
-                             Number& obj_value)
+                             Number & obj_value)
 {
-  assert(n == N_);
+  assert(n == (3 * (N_ + 1)) + 2);
 
-  // obj_value = x[0] * x[3] * (x[0] + x[1] + x[2]) + x[2];
-  Index shift = (2 * n) / 3;
-  obj_value = ((h_k) * (Square(x[shift]) + Square(x[shift + 1]))) / 2;
-  for (Index k = shift + 1; k < n - 1; k++) {
-    obj_value = obj_value + ((h_k) * (Square(x[k]) + Square(x[k + 1]))) / 2;
-  }
 
   return true;
 }
 
-Number grad_at_x(Number Obj_func(Number* X, Index n), //
-                 Number* X,//
+/*
+Number grad_at_x(Number Obj_func(Number * X, Index n), //
+                 Number * X, //
                  Index pos,//
                  Index n, //
                  Number h)
@@ -202,18 +195,20 @@ Number grad_at_x(Number Obj_func(Number* X, Index n), //
   Number grad = (f_x_p_h - f_x_m_h) / (2.0 * h);
   return grad;
 }
-
-
+*/
 
 // return the gradient of the objective function grad_{x} f(x)
-bool STONE_SLIDE_NLP::eval_grad_f(Index n,          //
-                                  const Number* x,  //
-                                  bool new_x,       //
-                                  Number* grad_f)
+bool STONE_SLIDE_NLP::eval_grad_f
+(
+  Index n, //
+  const Number * x, //
+  bool new_x,       //
+  Number * grad_f)
 {
-  assert(n == N_);
+  assert(n == (3 * (N_ + 1)) + 2);
   // Approx Gradient using FDS
   // declare X a copy array of same size of x
+  /*
   Number X[n];
   // make a copy of x in X
   for (Index k = 0; k < n; k++) {
@@ -223,18 +218,7 @@ bool STONE_SLIDE_NLP::eval_grad_f(Index n,          //
   std::cout << std::endl;
   Number h = step_size;
 
-
-  //std::cout << " approx gradient of function " << std::endl;
-  //std::cout << "--------------------" << std::endl;
-  // set gradt upto (2*n)/3 0
-  for (Index at = 0; at < ((2 * n) / 3); at++) {
-    grad_f[at] = 0;
-
-    // std::cout << "grad[" << at << "]: " << grad_f[at] << "\n";
-  }
-  //std::cout << " approx gradient " << std::endl;
-  //std::cout << "--------------------" << std::endl;
-  for (Index at = ((2 * n) / 3); at < n; at++) {
+  for (Index at = 0; at < n; at++) {
     Number val = grad_at_x(Obj_func, X, at, n, h);
     grad_f[at] = val;
 
@@ -242,83 +226,33 @@ bool STONE_SLIDE_NLP::eval_grad_f(Index n,          //
   }
   // std::cout << "--------------------" << std::endl;
 
-
-  // Exact Gradient with size n
-  // //std::cout << "Exact Gradient\n";
-  // // /set gradt upto (2 * n) / 3 0
-  // for (Index at = 0; at < ((2 * n) / 3); at++) {
-  //    grad_f[at] = 0;
-
-  //    //std::cout << "grad[" << at << "]: " << grad_f[at] << "\n";
-  // }
-  // grad_f[((2 * n) / 3)] = h_k * x[((2 * n) / 3)];
-  // grad_f[n - 1] = h_k * x[n - 1];
-  // //std::cout << "grad[" << ((2 * n) / 3) << "]: " << grad_f[((2 * n) / 3)] << "\n";
-  // for (Index at = ((2 * n) / 3) + 1; at < n - 1; at++) {
-  //    grad_f[at] = 2 * h_k * x[at];
-  //    //std::cout << "grad[" << at << "]: " << grad_f[at] << "\n";
-  // }
-  //std::cout << "grad[" << (n - 1) << "]: " << grad_f[n - 1] << "\n";
-
-
-
-  ///*
-  /* Exact Gradient with size n/3
-  // set gradt upto (2*n)/3 0
-  std::cout << "Exact Gradient\n";
-  grad_f[0] = h_k * x[((2 * n) / 3)];
-  grad_f[(n / 3) - 1] = h_k * x[n - 1];
-  Index cnt = 1;
-  std::cout << "grad[" << "0" << "]: " << grad_f[0] << "\n";
-  for (Index at = ((2 * n) / 3) + 1 ; at < n - 1; at++) {
-     grad_f[cnt++] = 2 * h_k * x[at];
-     std::cout << "grad[" << (cnt - 1) << "]: " << grad_f[(cnt - 1)] << "\n";
-  }
-  std::cout << "grad[" << ((n / 3) - 1) << "]: " << grad_f[(n / 3) - 1] << "\n";
   */
+
   return true;
 }
 
 // return the value of the constraints: g(x)
 bool STONE_SLIDE_NLP::eval_g(Index n,          //
-                             const Number* x,  //
+                             const Number * x, //
                              bool new_x,       //
                              Index m,          //
-                             Number* g)
+                             Number * g)
 {
-  assert(n == N_);
-  assert(m == no_of_cons);
+  assert(n == (3 * (N_ + 1)) + 2);
+  assert(m == (2 * (N_ + 1)) + 3);
 
-  Index k_th = 0;
-  Index shift = n / 3;
-  for (Index at = 0; at < (n / 3) - 1; at++) {
-    g[k_th] =
-      x[at + 1] - x[at] - (((h_k) * (x[at + shift + 1] + x[at + shift])) / 2);
-    k_th = k_th + 1;
-  }
-
-  for (Index at = n / 3; at < ((2 * n) / 3) - 1; at++) {
-    g[k_th] =
-      x[at + 1] - x[at] - (((h_k) * (x[at + shift + 1] + x[at + shift])) / 2);
-    k_th = k_th + 1;
-  }
-  g[k_th] = x[0];  // x(0) = 0
-  g[++k_th] = x[(n / 3) - 1] - 1; // x(1) = 1
-  g[++k_th] = x[n / 3]; // v(0) = 0
-  g[++k_th] = x[(2 * (n / 3)) - 1]; // v(1) = 0
-  //assert(k_th == no_of_cons);
   return true;
 }
 
 // return the structure or values of the Jacobian
 bool STONE_SLIDE_NLP::eval_jac_g(Index n,          //
-                                 const Number* x,  //
+                                 const Number * x, //
                                  bool new_x,       //
                                  Index m,          //
                                  Index nele_jac,   //
-                                 Index* iRow,      //
-                                 Index* jCol,      //
-                                 Number* values)
+                                 Index * iRow,     //
+                                 Index * jCol,     //
+                                 Number * values)
 {
   if (values == NULL) {
     // return the structure of the Jacobian
@@ -391,21 +325,21 @@ bool STONE_SLIDE_NLP::eval_h(
 
 void STONE_SLIDE_NLP::finalize_solution(SolverReturn status,       //
                                         Index n,                   //
-                                        const Number* x,           //
-                                        const Number* z_L,         //
-                                        const Number* z_U,         //
+                                        const Number * x,          //
+                                        const Number * z_L,        //
+                                        const Number * z_U,        //
                                         Index m,                   //
-                                        const Number* g,           //
-                                        const Number* lambda,      //
+                                        const Number * g,          //
+                                        const Number * lambda,     //
                                         Number obj_value,          //
-                                        const IpoptData* ip_data,  //
-                                        IpoptCalculatedQuantities* ip_cq)
+                                        const IpoptData * ip_data, //
+                                        IpoptCalculatedQuantities * ip_cq)
 {
   // here is where we would store the solution to variables, or write to a
   // file,
   // etc
   // so we could use the solution.
-
+  /*
   // For this example, we write the solution to the console
   std::cout << std::endl
             << std::endl
@@ -493,5 +427,5 @@ void STONE_SLIDE_NLP::finalize_solution(SolverReturn status,       //
     std::cout << "u[" << i << "] = " << (((-12)*i) + 6) << std::endl;
   }
   myfile.close();
-
+  */
 }
