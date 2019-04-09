@@ -26,7 +26,7 @@ int main() {
 	for (int i = 0 ; i <= n ; i++) {
 		X[i] = sin(T[i]);
 		//X[i] = 1;
-		//cout << T[i] << "," << X[i] << "\n";
+		cout << T[i] << "," << X[i] << "\n";
 	}
 
 	C = compute_c<double, int>(n + 1);
