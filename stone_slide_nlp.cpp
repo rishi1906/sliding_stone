@@ -14,12 +14,12 @@
 using namespace Ipopt;
 
 // define no of constraints and size of decision vector
-#define no_of_cons (2 * (n / 3 - 1)) + 4
-#define N_ 60
 
-// define sie of stepsize for finite difference scheme to find gradient
+#define N_ 10 // no of grid points
+
+// define size of stepsize for finite difference scheme to find gradient
 const Number step_size = 1e-8;
-
+#define PI acos(-1)
 // define computation of objective function to be used in finite differenc scheme
 inline Number Obj_func(Number* X, Index n)
 {
@@ -38,15 +38,15 @@ STONE_SLIDE_NLP::~STONE_SLIDE_NLP() {}
 // returns the size of the problem
 bool STONE_SLIDE_NLP::get_nlp_info(Index& n,          // size of problem
                                    Index& m,          // no of constraintsno of constraints
-                                   Index& nnz_jac_g,  // no of non zero elements in jacobain 
+                                   Index& nnz_jac_g,  // no of non zero elements in jacobain
                                    Index& nnz_h_lag,  // no of non zero elements in hessian
                                    IndexStyleEnum& index_style)
 {
-  // The problem described 
-  n = N_;  
+  // The problem described
+  n = (3 * (N_ + 1) ) + 2;
 
   // No of constraints
-  m = no_of_cons;
+  m = (2 * (N_ + 1)) + 3;
 
   // size of jacobian matrix
   nnz_jac_g = m * n;
@@ -70,31 +70,43 @@ bool STONE_SLIDE_NLP::get_bounds_info(Index n,      // size of problem
 {
   // here, the n and m we gave IPOPT in get_nlp_info are passed back to us.
   // If desired, we could assert to make sure they are what we think they are.
-  assert(n == N_);
-  assert(m == no_of_cons);
+  assert(n == (3 * (N_ + 1)) + 2);
+  assert(m == (2 * (N_ + 1)) + 3);
 
   // Lower bounds
-  // for x
-  for (Index i = 0; i < n; i++) {
-    x_l[i] = -5.0;
+  // for X
+  for (Index i = 0; i <= N_; i++) {
+    x_l[i] = -2.0;
   }
-  // for v
-  // for (Index i = 0; i < (2 * n) / 3; i++) {
-  //    x_l[i] = 0.0;
-  // }
-  // // for u
-  // for (Index i = 0; i < (2 * n) / 3; i++) {
-  //    x_l[i] = 0.0;
-  // }
+  // for Y
+  for (Index i = (N_ + 1); i <= ((2 * N_) + 1); i++) {
+    x_l[i] = -10.0;
+  }
+  // // for Theta
+  for (Index i = ((2 * N_) + 2); i <= ((3 * N_) + 3); i++) {
+    x_l[i] = -PI;
+  }
+  //for tow
+  x_l[n-1]=-1;
 
   // Upper Bounds
-  for (Index i = 0; i < n; i++) {
-    x_u[i] = +5.0;
+  // for X
+  for (Index i = 0; i <= N_; i++) {
+    x_u[i] = +2.0;
   }
+  // for Y
+  for (Index i = (N_ + 1); i <= ((2 * N_) + 1); i++) {
+    x_u[i] = +10.0;
+  }
+  // for Theta
+  for (Index i = ((2 * N_) + 2); i <= ((3 * N_) + 3); i++) {
+    x_u[i] = -PI;
+  }
+  //for tow
+  x_l[n-1]=+1;
 
-  // Set bounds for constraints
-
-
+  // set bounds on constraints
+  
   return true;
 }
 
