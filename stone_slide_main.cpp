@@ -7,7 +7,6 @@
 #include "IpIpoptApplication.hpp"
 #include "stone_slide_nlp.hpp"
 #include "Differentiation_Matrix.hpp"
-
 #include <iostream>
 #include <cstdlib>
 
@@ -25,7 +24,7 @@ int main(int argv, char* argc[]) {
   //  (use a SmartPtr, not raw)
   // We are using the factory, since this allows us to compile this
   // example with an Ipopt Windows DLL
-  /*
+
   SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
   app->RethrowNonIpoptException(true);
 
@@ -68,7 +67,5 @@ int main(int argv, char* argc[]) {
 
   return (int)status;
 
-
-  */
-  return 0;
+  //return 0;
 }

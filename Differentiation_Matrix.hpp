@@ -1,12 +1,12 @@
 #ifndef __Differentiation_Matrix__
 #define __Differentitaion_Matrix__
 
-#include "IpTNLP.hpp"
+//#include "IpTNLP.hpp"
 #include <iostream>
 #include <vector>
-using namespace Ipopt;
-// typedef double decimal;
-// typedef int integer;
+//using namespace Ipopt;
+typedef double decimal;
+typedef int integer;
 template<class decimal, class integer>
 std::vector<decimal > compute_c
 (

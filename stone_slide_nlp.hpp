@@ -9,6 +9,8 @@
 
 #include "IpTNLP.hpp"
 #include <vector>
+#include <iostream>
+
 using namespace Ipopt;
 
 /**
@@ -21,7 +23,7 @@ using namespace Ipopt;
 class STONE_SLIDE_NLP: public TNLP
 {
 public:
-  
+
   // parameterised constructor
   STONE_SLIDE_NLP(
     Index N
