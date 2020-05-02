@@ -1,5 +1,5 @@
 // to test Differentiation Matrix over Chebyshev polynomial
-//  g++ -I/home/dell/sliding_stone test_diff_mat.cpp -o test_diff_mat
+//  g++ -I/home/iota/Desktop/sliding_stone test_diff_mat.cpp -o test_diff_mat
 
 #include <iostream>
 #include <fstream>

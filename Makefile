@@ -10,7 +10,7 @@
 ##########################################################################
 
 # CHANGEME: This should be the name of your executable
-EXE = stone_slide_cpp
+EXE = stone_slide_main
 
 # CHANGEME: Here is the name of all object files corresponding to the source
 #           code that you wrote in order to define the problem statement
@@ -24,7 +24,7 @@ OBJS = stone_slide_main.o \
 ADDLIBS = 
 
 # CHANGEME: Additional flags for compilation (e.g., include flags)
-ADDINCFLAGS = -I/home/dell/sliding_stone
+ADDINCFLAGS = -I/home/iota/Desktop/sliding_stone
 
 ##########################################################################
 #  Usually, you don't have to change anything below.  Note that if you   #
@@ -41,11 +41,11 @@ CXXFLAGS = -O3 -pipe -DNDEBUG -Wparentheses -Wreturn-type -Wcast-qual -Wall -Wpo
 CXXLINKFLAGS =  -Wl,--rpath -Wl,/home/dell/Ipopt/build/lib
 
 # Include directories (we use the CYGPATH_W variables to allow compilation with Windows compilers)
-INCL = `PKG_CONFIG_PATH=/home/dell/Ipopt/build/lib64/pkgconfig:/home/dell/Ipopt/build/lib/pkgconfig:/home/dell/Ipopt/build/share/pkgconfig: pkg-config --cflags ipopt` $(ADDINCFLAGS)
+INCL = `PKG_CONFIG_PATH=/home/iota/Downloads/IPOPT_setup/CoinIpopt/build/lib64/pkgconfig:/home/iota/Downloads/IPOPT_setup/CoinIpopt/build/lib/pkgconfig:/home/iota/Downloads/IPOPT_setup/CoinIpopt/build/share/pkgconfig: pkg-config --cflags ipopt` $(ADDINCFLAGS)
 #INCL = -I`$(CYGPATH_W) /home/dell/Ipopt/build/include/coin`  $(ADDINCFLAGS)
 
 # Linker flags
-LIBS = `PKG_CONFIG_PATH=/home/dell/Ipopt/build/lib64/pkgconfig:/home/dell/Ipopt/build/lib/pkgconfig:/home/dell/Ipopt/build/share/pkgconfig: pkg-config --libs ipopt`
+LIBS = `PKG_CONFIG_PATH=/home/iota/Downloads/IPOPT_setup/CoinIpopt/build/lib64/pkgconfig:/home/iota/Downloads/IPOPT_setup/CoinIpopt/build/lib/pkgconfig:/home/iota/Downloads/IPOPT_setup/CoinIpopt/build/share/pkgconfig: pkg-config --libs ipopt`
 ##LIBS = -link -libpath:`$(CYGPATH_W) /home/dell/Ipopt/build/lib` libipopt.lib -lm  -ldl
 #LIBS = -L/home/dell/Ipopt/build/lib -lipopt -lm  -ldl
 

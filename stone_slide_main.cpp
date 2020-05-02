@@ -13,6 +13,7 @@
 using namespace Ipopt;
 
 int main(int argv, char* argc[]) {
+  freopen("../output/console_output.txt", "w", stdout);
   // Create a new instance of your nlp
   //  (use a SmartPtr, not raw)
   int no_of_grid_points;
